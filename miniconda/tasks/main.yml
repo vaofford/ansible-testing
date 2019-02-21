@@ -2,15 +2,15 @@
 # Tasks file for miniconda
 
 - name: Download miniconda installer
-	register: miniconda_downloaded
-	get_url:
-		url={{ miniconda_installer.url }}/{{ miniconda_installer.file }}
-		dest=/tmp/{{ miniconda_installer.file }}
-		mode=0755
+  register: miniconda_downloaded
+  get_url:
+    url={{ miniconda_installer.url }}/{{ miniconda_installer.file }}
+    dest=/tmp/{{ miniconda_installer.file }}
+    mode=0755
 
 - name: Grep miniconda version from script
     shell: "grep - 'VER:' {{ miniconda_installer.file }}"
     register: grep_output
 
   - debug:
-      var: grep_output.stdout_lines
+    var: grep_output.stdout_lines

@@ -1,5 +1,5 @@
 ---
 - hosts: all
 
-	roles:
-		- {role: miniconda, tags: MiniConda }
+  roles:
+    - {role: miniconda, tags: MiniConda }
