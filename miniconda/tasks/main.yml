@@ -9,5 +9,5 @@
     mode=0755
 
 - name: Grep miniconda version from script
-    shell: "grep - 'VER:' ""{{ miniconda_installer.file }}""
+    shell: "grep 'VER:' "{{ miniconda_installer.file }}"
     register: grep_output
