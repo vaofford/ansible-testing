@@ -8,6 +8,8 @@
     dest=/tmp/{{ miniconda_installer.file }}
     mode=0755
 
-- name: Grep miniconda version from script
-    shell: "grep 'VER:' "{{ miniconda_installer.file }}"
-    register: grep_output
+- name: Get miniconda version
+  shell: "head /tmp/{{ miniconda_installer.file }} | grep VER: | awk '{print $3}'"
+  register: grep_output
+
+- debug: var=grep_output
