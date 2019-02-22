@@ -14,20 +14,20 @@
 
 - name: Set conda install directory
   set_fact:
-    conda_install_dir: "{{ conda_dir_prefix.dir }}/miniconda-{{ miniconda_version.stdout }}"
+    conda_dir: "{{ install_prefix.dir }}/miniconda-{{ miniconda_version.stdout }}"
 
 - name: Check for conda_install_directory
-  stat: path="{{ conda_install_dir }}"
-  register: conda_install_dir_status  
+  stat: path="{{ cconda_dir }}"
+  register: conda_dir_status  
 
 - name: Fail if conda install directory exists
   fail: msg="The conda install directory already exists"
-  when: conda_install_dir_status.stat.exists
+  when: conda_dir_status.stat.exists
 
 - name: Create conda install directory
   file:
-    path: "{{ conda_install_dir }}"
+    path: "{{ conda_dir }}"
     state: directory
 
 - debug:
-    var: conda_install_dir
+    var: conda_dir

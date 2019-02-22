@@ -5,7 +5,7 @@ miniconda_installer:
   url: 'http://repo.continuum.io/miniconda'
   file: 'Miniconda2-latest-Linux-x86_64.sh'
 
-conda_dir_prefix:
+install_prefix:
   dir: '/software'
 
 
