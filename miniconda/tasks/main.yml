@@ -45,7 +45,7 @@
 
 - name: Fail if conda executable doesn't exists
   fail: msg="The conda executable doesn't exist"
-  when: conda_dir_status.stat.exists == False 
+  when: conda_path_status .stat.exists == False 
 
 - debug:
     var: conda_dir
