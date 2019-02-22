@@ -1,0 +1,56 @@
+---
+# Tasks file for installing miniconda
+
+- name: Download miniconda installer
+  register: miniconda_downloaded
+  get_url:
+    url={{ miniconda_installer.url }}/{{ miniconda_installer.file }}
+    dest=/tmp/{{ miniconda_installer.file }}
+    mode=0755
+
+- name: Get miniconda version
+  shell: "head /tmp/{{ miniconda_installer.file }} | grep VER: | awk '{print $3}'"
+  register: miniconda_version
+
+- name: Set conda install directory
+  set_fact:
+    conda_dir: "{{ install_prefix.dir }}/miniconda-{{ miniconda_version.stdout }}"
+
+- name: Fail if conda install directory exists
+  block: 
+    - name: Get status of conda install directory  
+      stat: path="{{ conda_dir }}"
+      register: conda_dir_status
+    - name: Fail if directory exists
+      fail: msg="The conda install directory already exists"
+      when: conda_dir_status.stat.exists
+
+- name: Install miniconda into conda dir
+  command: "/tmp/{{ miniconda_installer.file }} -b -p {{ conda_dir }}"
+  args:
+    creates: "{{ conda_dir }}"
+  when: not conda_dir_status.stat.exists
+
+- name: Delete miniconda installer
+  file:
+    path: "/tmp/{{ miniconda_installer.file }}"
+    state: absent
+
+- name: set conda exec path
+  set_fact:
+    conda_exec: "{{ conda_dir }}/bin/conda"
+
+- name: Fail if conda executable path doesn't exist
+  block: 
+    - name: Get status of conda executable
+      stat: path="{{ conda_exec }}"
+      register: conda_exec_status
+    - name: Fail if conda exec doesn't exist
+      fail: msg="The conda executable doesn't exist"
+      when: not conda_exec_status.stat.exists
+
+- name: Update base conda packages
+  shell: "{{ conda_exec }} update -y --all"
+  register: conda_update_pkgs
+  changed_when: conda_update_pkgs.stdout is not search('All requested packages already installed')
+  failed_when: conda_update_pkgs.rc != 0
