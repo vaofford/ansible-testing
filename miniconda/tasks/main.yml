@@ -30,5 +30,10 @@
     creates: "{{ conda_dir }}"
   when: not conda_dir_status.stat.exists
 
+- name: Delete miniconda installer
+  file:
+    path: "/tmp/{{ miniconda_installer.file }}"
+    state: absent
+
 - debug:
     var: conda_dir
