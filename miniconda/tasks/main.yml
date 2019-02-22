@@ -50,9 +50,11 @@
 - name: Update base conda packages
   shell: "{{ conda_exec }} update -y --all"
   register: conda_update_pkgs
-  when: miniconda_pkg_update
   changed_when: conda_update_pkgs.stdout is not search('All requested packages already installed')
-failed_when: conda_update_pkgs.rc != 0
+  failed_when: conda_update_pkgs.rc != 0
 
 - debug:
     var: conda_dir
+
+- debug:
+    var: conda_update_pkgs
