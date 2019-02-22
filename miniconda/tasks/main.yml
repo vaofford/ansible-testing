@@ -37,15 +37,22 @@
 
 - name: Set conda executable path
   set_fact:
-    conda_path: "{{ conda_dir }}/bin/conda"
+    conda_exec: "{{ conda_dir }}/bin/conda"
 
 - name: Get status of conda executable
-  stat: path="{{ conda_path }}"
-  register: conda_path_status  
+  stat: path="{{ conda_exec }}"
+  register: conda_exec_status  
 
 - name: Fail if conda executable doesn't exists
   fail: msg="The conda executable doesn't exist"
-  when: conda_path_status .stat.exists == False 
+  when: conda_exec_status .stat.exists == False 
+
+- name: Update base conda packages
+  shell: "{{ conda_exec }} update -y --all"
+  register: conda_update_pkgs
+  when: miniconda_pkg_update
+  changed_when: conda_update_pkgs.stdout is not search('All requested packages already installed')
+failed_when: conda_update_pkgs.rc != 0
 
 - debug:
     var: conda_dir
