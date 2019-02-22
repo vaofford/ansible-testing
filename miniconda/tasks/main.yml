@@ -16,10 +16,14 @@
   set_fact:
     conda_dir: "{{ install_prefix.dir }}/miniconda-{{ miniconda_version.stdout }}"
 
-- name: Get status of conda install directory
-  stat: path="{{ conda_dir }}"
-  register: conda_dir_status
-  failed_when: not conda_dir_status.stat.exists
+- name: Fail if conda install directory exists
+  block: 
+    - name: Get status of conda install directory  
+      stat: path="{{ conda_dir }}"
+      register: conda_dir_status
+    - name: Fail if directory exists
+      fail: msg="The conda install directory already exists"
+      when: conda_dir_status.stat.exists
 
 - name: Install miniconda into conda dir
   command: "/tmp/{{ miniconda_installer.file }} -b -p {{ conda_dir }}"
@@ -32,14 +36,18 @@
     path: "/tmp/{{ miniconda_installer.file }}"
     state: absent
 
-- name: Set conda executable path
+- name: set conda exec path
   set_fact:
     conda_exec: "{{ conda_dir }}/bin/conda"
 
-- name: Get status of conda executable
-  stat: path="{{ conda_exec }}"
-  register: conda_exec_status  
-  failed_when: not conda_exec_status.stat.exists
+- name: Fail if conda executable path doesn't exist
+  block: 
+    - name: Get status of conda executable
+      stat: path="{{ conda_exec }}"
+      register: conda_exec_status
+    - name: Fail if conda exec doesn't exist
+      fail: msg="The conda executable doesn't exist"
+      when: not conda_exec_status.stat.exists
 
 - name: Update base conda packages
   shell: "{{ conda_exec }} update -y --all"
