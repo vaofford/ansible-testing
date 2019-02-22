@@ -20,10 +20,10 @@
   stat: path="{{ conda_dir }}"
   register: conda_dir_status  
 
- - name: Fail if conda install directory exists
-   fail: msg="The conda install directory already exists"
-   when: conda_dir_status.stat.exists
-   
+- name: Fail if conda install directory exists
+  fail: msg="The conda install directory already exists"
+  when: conda_dir_status.stat.exists
+
 - name: Install miniconda into conda dir
   command: "/tmp/{{ miniconda_installer.file }} -b -p {{ conda_dir }}"
   args:
