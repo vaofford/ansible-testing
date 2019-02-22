@@ -6,7 +6,7 @@ miniconda_installer:
   file: 'Miniconda2-latest-Linux-x86_64.sh'
 
 install_prefix:
-  dir: '/software'
+  dir: '/software/pathogen'
 
 
 
