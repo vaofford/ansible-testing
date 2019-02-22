@@ -4,3 +4,4 @@
 - name: Add conda channels
   shell: "{{ conda_exec }} config --add channels {{ item }}"
   loop: "{{miniconda_channels}}"
+
