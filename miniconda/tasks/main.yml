@@ -20,20 +20,32 @@
   stat: path="{{ conda_dir }}"
   register: conda_dir_status  
 
-- name: Fail if conda install directory exists
-  fail: msg="The conda install directory already exists"
-  when: conda_dir_status.stat.exists
+# - name: Fail if conda install directory exists
+#   fail: msg="The conda install directory already exists"
+#   when: conda_dir_status.stat.exists
 
-- name: Install miniconda into conda dir
-  command: "/tmp/{{ miniconda_installer.file }} -b -p {{ conda_dir }}"
-  args:
-    creates: "{{ conda_dir }}"
+# - name: Install miniconda into conda dir
+#   command: "/tmp/{{ miniconda_installer.file }} -b -p {{ conda_dir }}"
+#   args:
+#     creates: "{{ conda_dir }}"
+#   when: not conda_dir_status.stat.exists
+
+# - name: Delete miniconda installer
+#   file:
+#     path: "/tmp/{{ miniconda_installer.file }}"
+#     state: absent
+
+- name: Set conda executable path
+  set_fact:
+    conda_path: "{{ conda_dir }}/bin/conda"
+
+- name: Get status of conda executable
+  stat: path="{{ conda_path }}"
+  register: conda_path_status  
+
+- name: Fail if conda executable doesn't exists
+  fail: msg="The conda executable doesn't exist"
   when: not conda_dir_status.stat.exists
-
-- name: Delete miniconda installer
-  file:
-    path: "/tmp/{{ miniconda_installer.file }}"
-    state: absent
 
 - debug:
     var: conda_dir
