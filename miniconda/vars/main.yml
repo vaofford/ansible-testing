@@ -8,6 +8,9 @@ miniconda_installer:
 install_prefix:
   dir: '/software/pathogen'
 
-
+miniconda_channels:
+  - bioconda
+  - conda-forge
+  - sanger-pathogens
 
 
