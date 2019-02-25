@@ -1,5 +1,17 @@
 ---
+
+#####################################################################
+#                                                                   #
+#               CONFIGURING SANGER PATHOGEN MACHINES                #
+#                                                                   #
+#####################################################################
+
+# Installs miniconda
+# Installs default pathogen conda environment
+# Sets up directories and installs deployment scripts
+# Note: is set to fail if miniconda or deployment directories exist
+
 - hosts: localhost
 
   roles:
-    - {role: miniconda, tags: MiniConda }
+    - {role: miniconda, tags: miniconda }
