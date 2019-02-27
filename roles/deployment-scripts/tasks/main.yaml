@@ -1,0 +1,6 @@
+---
+
+# Roles for setting up initial run of deployment scripts
+
+- include: install_dependencies.yml
+- include: deployment_scripts.yml

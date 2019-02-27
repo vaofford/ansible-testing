@@ -1,0 +1,44 @@
+---
+# Tasks file for configuring miniconda
+
+# This might be able to be removed, was required when testing with vagrant
+# - name: Configure shell with conda init
+#   shell: "{{ conda_exec }} init bash"
+
+- name: Add and check conda channels
+  block:
+    - name: Add conda channels
+      shell: "{{ conda_exec }} config --add channels {{ item }}"
+      loop: "{{ miniconda_channels }}"
+
+    - name: Get conda channels
+      shell: "{{ conda_exec}} config --get channels"
+      register: returned_channels
+
+    - name: Compare conda channels
+      fail: msg="{{ item }} not found in channels"
+      when: not returned_channels.stdout is search( item )
+      loop: "{{ miniconda_channels }}"
+
+
+- name: Import sanger-pathogens production conda environments
+  block:
+    - name: Clean artifact path
+      file:
+        state: absent
+        path: "{{ sanger_pathogens.conda_repo_destination }}"
+      when: sanger_pathogens.conda_repo_destination != ""
+
+    - name: Clone sanger-pathogens repository
+      shell: "git clone {{sanger_pathogens.conda_repo_url}} {{ sanger_pathogens.conda_repo_destination }}"
+      
+    - name: Import production conda environments
+      shell: "{{ conda_exec }} env create -f {{ item }}"
+      with_fileglob: "{{ recipe_tmp_dir }}/environments/production/*.yml"
+
+    - name: Clean artifact path
+      file:
+        state: absent
+        path: "{{ sanger_pathogens.conda_repo_destination }}"
+
+

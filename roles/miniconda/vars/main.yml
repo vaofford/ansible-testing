@@ -1,5 +1,5 @@
 ---
-# vars used for miniconda installation and configuration
+# vars used for miniconda installation
 
 miniconda_installer:
   url: 'http://repo.continuum.io/miniconda'
@@ -7,10 +7,4 @@ miniconda_installer:
 
 install_prefix:
   dir: '/software/pathogen'
-
-miniconda_channels:
-  - bioconda
-  - conda-forge
-  - sanger-pathogens
-
 

@@ -1,0 +1,11 @@
+---
+# vars used for miniconda configuration
+
+miniconda_channels:
+  - bioconda
+  - conda-forge
+  - sanger-pathogens
+
+sanger_pathogens:
+  conda_repo_url: https://github.com/sanger-pathogens/conda-recipes.git
+  conda_repo_destination: /tmp/conda-recipes

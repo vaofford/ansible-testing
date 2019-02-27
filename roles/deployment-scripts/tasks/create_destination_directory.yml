@@ -1,0 +1,11 @@
+- name: Create destination directory
+  block: 
+    - name: Check whether destination directory exists
+      stat: path="{{ dest_dir.value }}"
+      register: dest_dir_status
+
+    - name: Create destination directory if it doesn't exist
+      file:
+        path: "{{ dest_dir.value }}"
+        state: directory
+      when: not dest_dir_status.stat.exists

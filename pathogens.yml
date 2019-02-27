@@ -15,3 +15,5 @@
 
   roles:
     - {role: miniconda, tags: miniconda }
+    - {role: pathogen-conda, tags: pathogen }
+    - {role: deployment-scripts, tags: deployment }
