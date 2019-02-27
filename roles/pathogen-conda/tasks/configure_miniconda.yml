@@ -34,7 +34,7 @@
       
     - name: Import production conda environments
       shell: "{{ conda_exec }} env create -f {{ item }}"
-      with_fileglob: "{{ recipe_tmp_dir }}/environments/production/*.yml"
+      with_fileglob: "{{ sanger_pathogens.conda_repo_destination }}/environments/production/*.yml"
 
     - name: Clean artifact path
       file:

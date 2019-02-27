@@ -41,9 +41,19 @@
     path: "{{ miniconda_installer_path }}"
     state: absent
 
-- name: set conda exec path
-  set_fact:
-    conda_exec: "{{ conda_dir }}/bin/conda"
+- name: set conda executable paths 
+  block:
+    - name: set conda exec path
+      set_fact:
+        conda_exec: "{{ conda_dir }}/bin/conda"
+
+    - name: set conda activate exec path
+      set_fact:
+        conda_activate: "{{ conda_dir }}/bin/activate"    
+
+    - name: set conda deactivate exec path
+      set_fact:
+        conda_deactivate: "{{ conda_dir }}/bin/deactivate"     
 
 - name: Fail if conda executable path doesn't exist
   block: 

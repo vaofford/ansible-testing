@@ -1,29 +1,10 @@
 ---
 # Tasks file for installing deployment repository dependencies
 
-- name: Install deployment dependencies with conda
-  block:
-    - name: Install App::cpanminus with conda
-      shell: "conda install -c bioconda perl-app-cpanminus"
-
-    - name: Install Getopt::Long with conda
-      shell: "conda install -c bioconda perl-getopt-long"
-
-    - name: Install Digest::MD5::File with conda
-      shell: "conda install -c bioconda perl-digest-md5-file"
-
-    - name: Install JSON with conda
-      shell: "conda install -c bioconda perl-json"
-
-    - name: Install File::Find::Rule with conda
-      shell: "conda install -c bioconda perl-file-find-rule"
-
-    - name: Install File::Slurp with conda
-      shell: "conda install -c bioconda perl-file-slurp"
-
-    - name: Install Test::Most with cpanm
-      shell: "conda install -c bioconda perl-test-most"
-
+- name: Activate sanger-pathogens-deployment conda environment
+  shell: "source {{ conda_activate }} sanger-pathogens-deployment"
+  args:
+    executable: /bin/bash
 
 - name: Install deployment dependencies with cpanm
   block:
@@ -37,3 +18,8 @@
     - name: Install YAML::XS with cpanm
       shell: "sudo cpanm YAML::XS"
     # Available via conda conda install -c eumetsat perl-yaml-xs
+
+- name: Dectivate sanger-pathogens-deployment conda environment
+  shell: "source {{ conda_deactivate }}"
+  args:
+    executable: /bin/bash
