@@ -1,25 +1,22 @@
 ---
 # Tasks file for installing deployment repository dependencies
 
-- name: Activate sanger-pathogens-deployment conda environment
-  shell: "source {{ conda_activate }} sanger-pathogens-deployment"
-  args:
-    executable: /bin/bash
+- name: Command to activate sanger-pathogens-deployment conda environment
+  set_fact:    
+    activate_deployment_env: "source /software/pathogen/miniconda-4.5.12/bin/activate sanger-pathogens-deployment"  
 
 - name: Install deployment dependencies with cpanm
   block:
     - name: Install Net::SCP with cpanm
-      shell: "sudo cpanm Net::SCP"
+#      shell: "sudo cpanm Net::SCP"
+      shell: "{{activate_deployment_env}} && cpanm Net::SCP"
 
     - name: Install Git::Repository with cpanm
-      shell: "sudo cpanm Git::Repository"
+#      shell: "sudo cpanm Git::Repository"
       # Available via conda conda install -c dan_blanchard perl-git-repository 
+      shell: "{{activate_deployment_env}} &&cpanm Git::Repository"
 
-    - name: Install YAML::XS with cpanm
-      shell: "sudo cpanm YAML::XS"
+#    - name: Install YAML::XS with cpanm
+#      shell: "sudo cpanm YAML::XS"
     # Available via conda conda install -c eumetsat perl-yaml-xs
-
-- name: Dectivate sanger-pathogens-deployment conda environment
-  shell: "source {{ conda_deactivate }}"
-  args:
-    executable: /bin/bash
+#      shell: "{{activate_deployment_env}} &&cpanm YAML::XS"
