@@ -7,73 +7,63 @@
 
 - name: Set miniconda installer path
   set_fact: 
-    miniconda_installer_path: /tmp/{{ miniconda_installer.file }}
+    miniconda_installer: "{{ installer.miniconda.dest_prefix }}/{{ installer.miniconda.file }}"
 
 - name: Download miniconda installer
-  register: miniconda_downloaded
   get_url:
-    url={{ miniconda_installer.url }}/{{ miniconda_installer.file }}
-    dest={{ miniconda_installer_path }}
+    url={{ installer.miniconda.url }}/{{ installer.miniconda.file }}
+    dest={{ miniconda_installer }}
     mode=0755
 
 - name: Get miniconda version
-  shell: "head {{ miniconda_installer_path }} | grep VER: | awk '{print $3}'"
+  shell: "head {{ miniconda_installer }} | grep VER: | awk '{print $3}'"
   register: miniconda_version
 
 - name: Set conda install directory path
-  set_fact:
-    conda_dir: "{{ install_prefix.miniconda.dir }}/miniconda-{{ miniconda_version.stdout }}"
-  when: install_prefix.miniconda.dir is defined
+  block:
+    - name: Use install_prefix as defined
+      set_fact:
+        conda_base_dir: "{{ install_prefix.miniconda }}/miniconda-{{ miniconda_version.stdout }}"
+      when: install_prefix.miniconda is defined
 
-- name: Set conda install directory path
-  set_fact:
-    conda_dir: "{{ cwd.stdout }}/miniconda-{{ miniconda_version.stdout }}"
-  when: install_prefix.miniconda.dir is not defined
-
-- debug:
-    var: conda_dir
+    - name: Use current working directory as install_prefix is not defined
+      set_fact:
+        conda_base_dir: "{{ cwd.stdout }}/miniconda-{{ miniconda_version.stdout }}"
+      when: install_prefix.miniconda is not defined
 
 - name: Fail if conda install directory exists
   block: 
     - name: Get status of conda install directory  
-      stat: path="{{ conda_dir }}"
-      register: conda_dir_status
+      stat: path="{{ conda_base_dir }}"
+      register: conda_base_dir_status
 
     - name: Fail if directory exists
       fail: msg="The conda install directory already exists"
-      when: conda_dir_status.stat.exists
+      when: conda_base_dir_status.stat.exists
 
 - name: Install miniconda into conda dir
-  command: "{{ miniconda_installer_path }} -b -p {{ conda_dir }}"
+  command: "{{ miniconda_installer }} -b -p {{ conda_base_dir }}"
   args:
-    creates: "{{ conda_dir }}"
-  when: not conda_dir_status.stat.exists
+    creates: "{{ conda_base_dir }}"
+  when: not conda_base_dir_status.stat.exists
 
 - name: Delete miniconda installer
   file:
-    path: "{{ miniconda_installer_path }}"
+    path: "{{ miniconda_installer }}"
     state: absent
 
-- name: set conda executable paths 
+- name: set conda bin path 
   block:
-    - name: set conda exec path
+    - name: set conda bin path
       set_fact:
-        conda_exec: "{{ conda_dir }}/bin/conda"
-
-    - name: set conda activate exec path
-      set_fact:
-        conda_activate: "{{ conda_dir }}/bin/activate"    
-
-    - name: set conda deactivate exec path
-      set_fact:
-        conda_deactivate: "{{ conda_dir }}/bin/deactivate"     
+        conda_bin: "{{ conda_base_dir }}/bin"
 
 - name: Fail if conda executable path doesn't exist
   block: 
     - name: Get status of conda executable
-      stat: path="{{ conda_exec }}"
-      register: conda_exec_status
+      stat: path="{{ conda_bin}}/conda"
+      register: conda_status
 
     - name: Fail if conda exec doesn't exist
       fail: msg="The conda executable doesn't exist"
-      when: not conda_exec_status.stat.exists
+      when: not conda_status.stat.exists

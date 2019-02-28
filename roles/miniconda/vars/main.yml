@@ -1,6 +1,8 @@
 ---
 # vars used for miniconda installation
 
-miniconda_installer:
-  url: 'http://repo.continuum.io/miniconda'
-  file: 'Miniconda2-latest-Linux-x86_64.sh'
+installer:
+  miniconda:
+    url: 'http://repo.continuum.io/miniconda'
+    file: 'Miniconda2-latest-Linux-x86_64.sh'
+    dest_prefix: '/tmp'

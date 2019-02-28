@@ -3,5 +3,8 @@
 # Sanger pathogen-specific variables
 
 install_prefix:
-  miniconda:
-    dir: '/software/pathogen/external/apps'
+  miniconda: '/software/pathogen/external/apps'
+
+apps:
+  conda:
+    base_dir: '/software/pathogen/external/apps/miniconda-4.5.12'
