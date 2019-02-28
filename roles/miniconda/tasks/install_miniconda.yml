@@ -21,7 +21,7 @@
     - name: Set conda install directory path
       set_fact:
         conda_dir: "{{ install_prefix.dir }}/miniconda-{{ miniconda_version.stdout }}"
-      when: not conda_dir
+      when: conda_dir is undefined
 
 - name: Fail if conda install directory exists
   block: 
