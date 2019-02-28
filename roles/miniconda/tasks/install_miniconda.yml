@@ -16,12 +16,10 @@
   shell: "head {{ miniconda_installer_path }} | grep VER: | awk '{print $3}'"
   register: miniconda_version
 
-- name: Set conda related variables
-  block:
-    - name: Set conda install directory path
-      set_fact:
-        conda_dir: "{{ install_prefix.dir }}/miniconda-{{ miniconda_version.stdout }}"
-      when: conda_dir is undefined
+- name: Set conda install directory path
+  set_fact:
+    conda_dir: "{{ install_prefix.dir }}/miniconda-{{ miniconda_version.stdout }}"
+
 
 - name: Fail if conda install directory exists
   block: 
