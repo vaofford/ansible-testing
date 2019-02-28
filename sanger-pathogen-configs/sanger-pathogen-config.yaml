@@ -1,0 +1,7 @@
+
+---
+# Sanger pathogen-specific variables
+
+install_prefix:
+  miniconda:
+    dir: '/software/pathogen/external/apps'
