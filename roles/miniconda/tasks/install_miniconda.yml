@@ -1,52 +1,52 @@
 ---
 # Tasks file for installing miniconda
 
-- name: Build miniconda installer path
+- name: Build destination for miniconda installer script
   set_fact: 
     miniconda_installer: "{{ installer.miniconda.destination_directory }}/{{ installer.miniconda.file }}"
 
-- name: Download miniconda installer
+- name: Download miniconda installer script
   get_url:
     url={{ installer.miniconda.url }}/{{ installer.miniconda.file }}
     dest={{ miniconda_installer }}
     mode=0755
 
-- name: Get miniconda version
+- name: Get miniconda version from miniconda installer script
   shell: "head {{ miniconda_installer }} | grep VER: | awk '{print $3}'"
   register: miniconda_version
 
-- name: Set conda install directory path
+- name: Build miniconda installation path
   block:
-    - name: Use install_prefix as defined
+    - name: Use install_prefix to build conda install path (conda_base_directory)
       set_fact:
-        conda_base_directory: "{{ install_prefix.miniconda }}/miniconda-{{ miniconda_version.stdout }}"
+        miniconda_install_path: "{{ install_prefix.miniconda }}/miniconda-{{ miniconda_version.stdout }}"
 
-- name: Check whether conda install directory exists
+- name: Check whether miniconda installation path exists
   include_role: 
     name: common
     tasks_from: check_path_status
   vars:
-    path_to_check: "{{ conda_base_directory }}"
+    path_to_check: "{{ miniconda_install_path }}"
     fail_on_exists: true
 
-- name: Install miniconda into conda dir
-  command: "{{ miniconda_installer }} -b -p {{ conda_base_directory }}"
+- name: Install miniconda into miniconda installation path
+  command: "{{ miniconda_installer }} -b -p {{ miniconda_install_path }}"
   args:
-    creates: "{{ conda_base_directory }}"
+    creates: "{{ miniconda_install_path }}"
 
-- name: Delete miniconda installer
+- name: Delete miniconda installer script
   file:
     path: "{{ miniconda_installer }}"
     state: absent
 
-- name: Check whether conda bin directory exists
+- name: Check whether miniconda bin directory exists
   include_role: 
     name: common
     tasks_from: check_path_status
   vars:
-    path_to_check: "{{ conda_base_directory }}/bin"
+    path_to_check: "{{ miniconda_install_path }}/bin"
     expect_directory: true
     fail_on_exist: false
 
 - debug:
-    msg: "Miniconda {{ miniconda_version.stdout }} installed in {{ conda_base_directory }}."
+    msg: "Miniconda {{ miniconda_version.stdout }} installed in {{ miniconda_install_path}}."
