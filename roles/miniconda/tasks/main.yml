@@ -1,5 +1,9 @@
 ---
 
-# Roles for installing and configuring miniconda
+# Install miniconda in a versioned directory
+
+# Dependencies
+- include_role:
+    name: common
 
 - include: install_miniconda.yml

@@ -1,0 +1,6 @@
+---
+
+# Default variables for role
+
+install_prefix:
+  miniconda: '/tmp'
