@@ -1,0 +1,19 @@
+---
+# Common functions for validating paths
+# This can probably be broken down to remove unnecessary running of all tasks
+
+- name: Get path status 
+  stat: path="{{ path_to_check }}"
+  register: path_result
+
+- name: Fail when path expected to exist but doesn't
+  fail: msg="Failed as expected path doesn't exist - {{ path_to_check }}"
+  when: not path_result.stat.exists and (fail_on_exists is undefined or not fail_on_exists)
+
+- name: Fail when path not expected to exist but does
+  fail: msg="Failed as path already exists - {{ path_to_check }}"
+  when: path_result.stat.exists and (fail_on_exists is defined and fail_on_exists)
+
+- name: Fail when directory expected and path is not a directory
+  fail: msg="Failed as directory expected but path is not a directory - {{ path_to_check }}"
+  when: (expect_directory is defined and expect_directory) and ( path_result.stat.isdir is undefined or not path_result.stat.isdir )
