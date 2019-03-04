@@ -5,7 +5,30 @@
 # - name: Configure shell with conda init
 #   shell: "{{ conda_exec }} init bash"
 
-- name: Add and check conda channels
+- name: Fail when no miniconda installation path is provided
+  fail: msg="Failed as no miniconda installation path provided (apps.conda.base_dir)"
+  when: apps.conda.base_dir is undefined
+
+- name: Build conda bin directory path
+  set_fact:
+    conda_bin: "{{ apps.conda.base_dir  }}/bin"
+  when: apps.conda.base_dir is defined
+
+- name: Check whether conda bin directory exists
+  include_role: 
+    name: common
+    tasks_from: validate_path
+  vars:
+    path_to_check: "{{ conda_bin }}"
+    expect_directory: true
+    fail_on_exist: false
+
+- name: Set conda executable path
+  set_fact:
+    conda_exec: "{{ conda_bin  }}/conda"
+  when: conda_bin is defined
+
+- name: Add and validate conda channels
   block:
     - name: Add conda channels
       shell: "{{ conda_exec }} config --add channels {{ item }}"
@@ -20,6 +43,7 @@
       when: not returned_channels.stdout is search( item )
       loop: "{{ miniconda_channels }}"
 
+# This next step can take quite a while to run while conda solves the environment
 
 - name: Import sanger-pathogens production conda environments
   block:

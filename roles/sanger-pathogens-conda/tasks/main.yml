@@ -1,0 +1,9 @@
+---
+
+# Roles for configuring miniconda on sanger-pathogens machines
+
+# Dependencies
+- include_role:
+    name: common
+
+- include: configure_miniconda.yml

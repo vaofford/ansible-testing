@@ -1,5 +1,0 @@
----
-
-# Roles for installing and configuring miniconda
-
-- include: configure_miniconda.yml

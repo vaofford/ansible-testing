@@ -24,7 +24,7 @@
 - name: Check whether miniconda installation path exists
   include_role: 
     name: common
-    tasks_from: check_path_status
+    tasks_from: validate_path
   vars:
     path_to_check: "{{ miniconda_install_path }}"
     fail_on_exists: true
@@ -42,7 +42,7 @@
 - name: Check whether miniconda bin directory exists
   include_role: 
     name: common
-    tasks_from: check_path_status
+    tasks_from: validate_path
   vars:
     path_to_check: "{{ miniconda_install_path }}/bin"
     expect_directory: true
