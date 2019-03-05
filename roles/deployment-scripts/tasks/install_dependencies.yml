@@ -1,22 +1,58 @@
 ---
 # Tasks file for installing deployment repository dependencies
 
+# Where possible, dependencies which are available via conda have been included in the following environment:
+# https://github.com/sanger-pathogens/conda-recipes/blob/master/environments/production/sanger-pathogens-deployment.yml
+# The CLASSPATH which the deployment repository expect is set in the general repository
+# https://gitlab.internal.sanger.ac.uk/sanger-pathogens/general/blob/master/java/sh/build.sh
+# This should match the path in the config file for the role/playbook
+
+- name: Fail when no miniconda installation path is provided
+  fail: msg="Failed as no miniconda installation path provided (apps.conda.base_dir)"
+  when: apps.conda.base_dir is undefined
+
 - name: Command to activate sanger-pathogens-deployment conda environment
   set_fact:    
-    activate_deployment_env: "source /software/pathogen/miniconda-4.5.12/bin/activate sanger-pathogens-deployment"  
+    activate_deployment_env: "source {{apps.conda.base_dir}}/bin/activate sanger-pathogens-deployment"  
 
-- name: Install deployment dependencies with cpanm
-  block:
-    - name: Install Net::SCP with cpanm
-#      shell: "sudo cpanm Net::SCP"
-      shell: "{{activate_deployment_env}} && cpanm Net::SCP"
+# - name: Install Perl dependencies using cpanm
+#   shell: "{{activate_deployment_env}} && cpanm {{item}}"
+#   loop:
+#     - 'Net::SCP'
+#     - 'Git::Repository'
+  
+- name: Build sanger-pathogens-deployment share path
+  set_fact:
+    env_share_path: "{{apps.conda.base_dir}}/envs/sanger-pathogens-deployment/share/google-api-java-client-1.47.1-0/lib"
 
-    - name: Install Git::Repository with cpanm
-#      shell: "sudo cpanm Git::Repository"
-      # Available via conda conda install -c dan_blanchard perl-git-repository 
-      shell: "{{activate_deployment_env}} &&cpanm Git::Repository"
+- name: Check whether sanger-pathogens-deployment share path exists
+  include_role: 
+    name: common
+    tasks_from: validate_path
+  vars:
+    path_to_check: "{{ env_share_path }}"
+    fail_on_exist: false
 
-#    - name: Install YAML::XS with cpanm
-#      shell: "sudo cpanm YAML::XS"
-    # Available via conda conda install -c eumetsat perl-yaml-xs
-#      shell: "{{activate_deployment_env}} &&cpanm YAML::XS"
+# There may be another way to do this but moving this into common wasn't working
+# - name: Check whether Java CLASSPATH directory exists
+#   stat: path="{{ env_vars.classpath }}"
+#   register: classpath_status
+
+# - name: Create destination directory if it doesn't exist
+#   shell: "mkdir -p {{ env_vars.classpath }}"
+#   when: not classpath_status.stat.exists
+
+# - name: Find jar files from google api in the environment share path
+#   find:
+#     paths: "{{ env_share_path }}"
+#     patterns: '*.jar'
+#   register: google_jar_paths
+
+# - name: Symlink google jar files to classpath 
+#   file: 
+#     src: "{{ item.path }}"
+#     dest: "{{ env_vars.classpath }}/{{ item.path | basename }}"
+#     state: link
+#     force: yes
+#   with_items: "{{ google_jar_paths.files }}"
+

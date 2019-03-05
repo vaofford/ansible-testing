@@ -1,0 +1,24 @@
+---
+# Tasks file for installing deployment repository dependencies
+
+- name: Command to activate sanger-pathogens-deployment conda environment
+  set_fact:    
+    activate_deployment_env: "source {{apps.conda.base_dir}}/bin/activate sanger-pathogens-deployment"  
+
+- name: Check whether checksum log file exists
+  stat: path="{{ deployment_scripts.checksum_log }}"
+  register: checksum_log_status
+
+- name: Touch checksum log file if it doesn't exist
+  shell: "touch {{ deployment_scripts.checksum_log }}"
+  when: not checksum_log_status.stat.exists
+
+- name: Run checksum script
+  shell: "{{activate_deployment_env}} && ./check_deployment_checksums.pl {{ deployment_scripts.checksum_log }}"
+  args:
+    chdir: "{{ deployment_scripts.destination }}"
+  register: checksum_result
+
+- name: Fail when there is output from the checksum script
+  fail: msg="Failed as there were errors from check_deployment_checksums.pl"
+  when: checksum_result.stdout != ""

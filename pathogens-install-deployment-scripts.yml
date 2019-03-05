@@ -1,0 +1,21 @@
+---
+
+#####################################################################
+#                                                                   #
+#       INSTALL DEPLOYMENT SCRIPTS ON SANGER PATHOGEN MACHINES      #
+#                                                                   #
+#####################################################################
+
+# Installs deployment script dependencies
+# Sets conda channels
+# Installs production conda environments
+# Note: is set to fail if miniconda directories exist
+
+- hosts: localhost
+  roles:
+    - role: deployment-scripts  
+      vars: 
+        deployment_mode: 'install'
+      tags: deployment_scripts
+
+

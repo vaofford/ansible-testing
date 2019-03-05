@@ -1,0 +1,4 @@
+- name: Run test deployment
+  shell: "git pull origin master"
+  args:
+    chdir: "{{ deployment_scripts.destination }}"

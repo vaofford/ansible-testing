@@ -1,0 +1,10 @@
+- name: Command to activate sanger-pathogens-deployment conda environment
+  set_fact:    
+    activate_deployment_env: "source {{apps.conda.base_dir}}/bin/activate sanger-pathogens-deployment"  
+
+- name: Run test deployment
+  shell: "{{activate_deployment_env}} && ./deploy.pl -e test"
+  environment:
+    CLASSPATH: "{{ env_vars.classpath }}"
+  args:
+    chdir: "{{ deployment_scripts.destination }}"

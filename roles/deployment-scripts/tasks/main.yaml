@@ -2,5 +2,21 @@
 
 # Roles for setting up initial run of deployment scripts
 
-- include: install_dependencies.yml
-- include: deployment_scripts.yml
+# Dependencies
+- include_role:
+    name: common
+
+# - include: install_dependencies.yml
+#   when: deployment_mode == 'install'
+
+# - include: download_deployment_scripts.yml
+#   when: deployment_mode == 'install'
+
+- include: get_deployment_updates.yml
+
+- include: check_deployment_checksums.yml
+
+- include: run_test_deployment.yml
+
+# - include: run_production_deployment.yml
+#   when: deployment_mode == 'production'
