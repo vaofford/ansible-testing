@@ -25,7 +25,7 @@
   set_fact:
     env_share_paths: 
       - "{{apps.conda.base_dir}}/envs/sanger-pathogens-deployment/share/google-api-java-client-1.47.1-0/lib"
-      - "{{apps.conda.base_dir}}/envs/sanger-pathogens-deployment/share/javabeans-activation-framework/lib"
+      - "{{apps.conda.base_dir}}/envs/sanger-pathogens-deployment/share/javabeans-activation-framework-1.1.1-0"
 
 
 - name: Check whether sanger-pathogens-deployment share path exists
