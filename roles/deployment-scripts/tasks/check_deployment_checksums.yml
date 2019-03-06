@@ -15,7 +15,7 @@
   when: deployment_scripts.local
 
 - name: Check whether checksum log file exists
-  stat: path="{{ deployment_scripts.checksum_log }}"
+  stat: path="{{ checksum_log }}"
   register: checksum_log_status
 
 - name: Touch checksum log file if it doesn't exist
