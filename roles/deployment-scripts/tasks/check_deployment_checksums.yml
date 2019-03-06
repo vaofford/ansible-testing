@@ -19,7 +19,7 @@
   register: checksum_log_status
 
 - name: Touch checksum log file if it doesn't exist
-  shell: "touch {{ deployment_scripts.checksum_log }}"
+  shell: "touch {{ checksum_log }}"
   when: not checksum_log_status.stat.exists
 
 - name: Run checksum script
