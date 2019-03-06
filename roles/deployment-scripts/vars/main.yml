@@ -5,7 +5,12 @@
 deployment_scripts: 
   url: https://github.com/sanger-pathogens/deployment.git
   destination: /software/pathogen/projects/deployment
+  branch: master
+  local: false
   prod_config: "config/production/global.yml"
   test_config: "config/test/global.yml"
-  checksum_log: "/software/pathogen/internal/prod/deployment_checksums.log"
+  local_config: "config/local/global.yml"
+  checksum_log: "/tmp/deployment_checksums.log"
+
+deployment_mode: install
 

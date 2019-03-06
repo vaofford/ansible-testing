@@ -15,44 +15,48 @@
   set_fact:    
     activate_deployment_env: "source {{apps.conda.base_dir}}/bin/activate sanger-pathogens-deployment"  
 
-# - name: Install Perl dependencies using cpanm
-#   shell: "{{activate_deployment_env}} && cpanm {{item}}"
-#   loop:
-#     - 'Net::SCP'
-#     - 'Git::Repository'
+- name: Install Perl dependencies using cpanm
+  shell: "{{activate_deployment_env}} && cpanm {{item}}"
+  loop:
+    - 'Net::SCP'
+    - 'Git::Repository'
   
-- name: Build sanger-pathogens-deployment share path
+- name: Build sanger-pathogens-deployment google-api share path
   set_fact:
-    env_share_path: "{{apps.conda.base_dir}}/envs/sanger-pathogens-deployment/share/google-api-java-client-1.47.1-0/lib"
+    env_share_paths: 
+      - "{{apps.conda.base_dir}}/envs/sanger-pathogens-deployment/share/google-api-java-client-1.47.1-0/lib"
+      - "{{apps.conda.base_dir}}/envs/sanger-pathogens-deployment/share/javabeans-activation-framework/lib"
+
 
 - name: Check whether sanger-pathogens-deployment share path exists
   include_role: 
     name: common
     tasks_from: validate_path
   vars:
-    path_to_check: "{{ env_share_path }}"
+    path_to_check: "{{ item }}"
     fail_on_exist: false
+  with_items: env_share_paths
 
 # There may be another way to do this but moving this into common wasn't working
-# - name: Check whether Java CLASSPATH directory exists
-#   stat: path="{{ env_vars.classpath }}"
-#   register: classpath_status
+- name: Check whether Java CLASSPATH directory exists
+  stat: path="{{ env_vars.classpath }}"
+  register: classpath_status
 
-# - name: Create destination directory if it doesn't exist
-#   shell: "mkdir -p {{ env_vars.classpath }}"
-#   when: not classpath_status.stat.exists
+- name: Create destination directory if it doesn't exist
+  shell: "mkdir -p {{ env_vars.classpath }}"
+  when: not classpath_status.stat.exists
 
-# - name: Find jar files from google api in the environment share path
-#   find:
-#     paths: "{{ env_share_path }}"
-#     patterns: '*.jar'
-#   register: google_jar_paths
+- name: Find jar files from google api in the environment share path
+  find:
+    paths: "{{ env_share_paths }}"
+    patterns: '*.jar'
+  register: jar_files_to_symlink
 
-# - name: Symlink google jar files to classpath 
-#   file: 
-#     src: "{{ item.path }}"
-#     dest: "{{ env_vars.classpath }}/{{ item.path | basename }}"
-#     state: link
-#     force: yes
-#   with_items: "{{ google_jar_paths.files }}"
+- name: Symlink google jar files to classpath 
+  file: 
+    src: "{{ item.path }}"
+    dest: "{{ env_vars.classpath }}/{{ item.path | basename }}"
+    state: link
+    force: yes
+  with_items: "{{ jar_files_to_symlink.files }}"
 

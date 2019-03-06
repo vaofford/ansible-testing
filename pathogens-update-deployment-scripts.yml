@@ -1,0 +1,20 @@
+---
+
+#####################################################################
+#                                                                   #
+#       UPDATE DEPLOYMENT SCRIPTS ON SANGER PATHOGEN MACHINES       #
+#                                                                   #
+#####################################################################
+
+# Updates deployment scripts
+# Runs test deployment
+# If tests pass, runs production deployment
+
+- hosts: localhost
+  roles:
+    - role: deployment-scripts  
+      vars: 
+        deployment_mode: 'test'
+      tags: deployment_scripts
+
+

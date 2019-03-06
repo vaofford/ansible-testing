@@ -1,0 +1,13 @@
+- name: Find jar files from google api in the environment share path
+  find:
+    paths: "{{ env_share_path }}"
+    patterns: '*.jar'
+  register: google_jar_paths
+
+- name: Symlink google jar files to classpath 
+  file: 
+    src: "{{ item.path }}"
+    dest: "{{ env_vars.classpath }}/{{ item.path | basename }}"
+    state: link
+    force: yes
+  with_items: "{{ google_jar_paths.files }}"

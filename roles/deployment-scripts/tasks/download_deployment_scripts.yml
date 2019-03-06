@@ -19,6 +19,14 @@
         state: directory
       when: deployment_destination.stat.exists
 
+    - name: Change ownership permissions if details provided
+      file:
+        path:
+        owner: deployment_scripts.owner
+        group: deployment_scripts.group
+        mode: deployment_scripts.mode
+      when: deployment_scripts.owner is defined or deployment_scripts.group is defined or deployment_scripts.mode is defined
+
     - name: Clone deployment repository path
       shell: "git clone {{ deployment_scripts.url }} {{ deployment_scripts.destination }}"
 

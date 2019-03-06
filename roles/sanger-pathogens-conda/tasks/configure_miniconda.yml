@@ -7,11 +7,11 @@
 
 - name: Fail when no miniconda installation path is provided
   fail: msg="Failed as no miniconda installation path provided (apps.conda.base_dir)"
-  when: apps.conda.bin_dir is undefined
+  when: apps.conda.base_dir is undefined
 
 - name: Set path to main conda executable
   set_fact:
-    conda_exec: "{{apps.conda.bin_dir}}/conda"
+    conda_exec: "{{apps.conda.base_dir}}/bin/conda"
 
 - name: Check whether conda executable exists
   include_role: 

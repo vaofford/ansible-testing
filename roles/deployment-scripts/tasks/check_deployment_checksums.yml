@@ -5,6 +5,15 @@
   set_fact:    
     activate_deployment_env: "source {{apps.conda.base_dir}}/bin/activate sanger-pathogens-deployment"  
 
+- name: Set checksum log path from variables
+  set_fact: 
+    checksum_log: "{{ deployment_scripts.checksum_log }}"
+
+- name: Set checksum log path to "/tmp/test_deployment_checksums.log" if local
+  set_fact: 
+    checksum_log: "/tmp/test_deployment_checksums.log"
+  when: deployment_scripts.local
+
 - name: Check whether checksum log file exists
   stat: path="{{ deployment_scripts.checksum_log }}"
   register: checksum_log_status
@@ -14,10 +23,13 @@
   when: not checksum_log_status.stat.exists
 
 - name: Run checksum script
-  shell: "{{activate_deployment_env}} && ./check_deployment_checksums.pl {{ deployment_scripts.checksum_log }}"
+  shell: "{{activate_deployment_env}} && ./check_deployment_checksums.pl {{ checksum_log }}"
   args:
     chdir: "{{ deployment_scripts.destination }}"
   register: checksum_result
+
+- debug:
+    msg: "Checksum log written to:  {{ checksum_log }}"
 
 - name: Fail when there is output from the checksum script
   fail: msg="Failed as there were errors from check_deployment_checksums.pl"

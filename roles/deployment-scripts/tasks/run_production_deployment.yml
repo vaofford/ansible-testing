@@ -2,8 +2,8 @@
   set_fact:    
     activate_deployment_env: "source {{apps.conda.base_dir}}/bin/activate sanger-pathogens-deployment"  
 
-- name: Run test deployment
-  shell: "{{activate_deployment_env}} && ./deploy.pl -e test"
+- name: Run production deployment
+  shell: "{{activate_deployment_env}} && ./deploy.pl -e production"
   environment:
     CLASSPATH: "{{ env_vars.classpath }}"
   args:

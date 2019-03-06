@@ -6,11 +6,11 @@
 - include_role:
     name: common
 
-# - include: install_dependencies.yml
-#   when: deployment_mode == 'install'
+- include: install_dependencies.yml
+  when: deployment_mode == 'install'
 
-# - include: download_deployment_scripts.yml
-#   when: deployment_mode == 'install'
+- include: download_deployment_scripts.yml
+  when: deployment_mode == 'install'
 
 - include: get_deployment_updates.yml
 
@@ -18,5 +18,5 @@
 
 - include: run_test_deployment.yml
 
-# - include: run_production_deployment.yml
-#   when: deployment_mode == 'production'
+- include: run_production_deployment.yml
+  when: deployment_mode == 'production' 
